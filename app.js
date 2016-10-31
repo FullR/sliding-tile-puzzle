@@ -4,6 +4,8 @@ const imageInput = document.querySelector("#puzzle-image-input");
 const uploadInput = document.querySelector("#puzzle-upload-input");
 const columnInput = document.querySelector("#puzzle-column-input");
 const rowInput = document.querySelector("#puzzle-row-input");
+const resetButton = document.querySelector("#reset-button");
+const scrambleButton = document.querySelector("#scramble-button");
 const initialWidth = Math.min(600, window.innerWidth);
 const initialHeight = initialWidth;
 const initialColumns = columnInput.value = 3;
@@ -52,22 +54,33 @@ class Puzzle {
     b.y = ay;
   }
 
+  reset() {
+    this.tiles.forEach((tile) => {
+      tile.x = tile.imageX;
+      tile.y = tile.imageY;
+      this.updateTileElPosition(tile);
+    })
+  }
+
   scramble() {
-    const {emptyTile} = this;
+    const {emptyTile, elementsCreated} = this;
     let last = null;
     const isValidTile = (tile) => tile !== last && tile !== emptyTile && this.areTilesNeighbors(tile, emptyTile);
 
     for(let i = 0; i < 1000; i++) {
       const nextTile = last = sample(this.tiles.filter(isValidTile));
       this.swapTiles(emptyTile, nextTile);
+      this.tiles.forEach((tile) => this.updateTileElPosition(tile));
     }
   }
 
   updateTileElPosition(tile) {
     const {tileWidth, tileHeight} = this;
     const {el, x, y} = tile;
-    el.style.left = `${x * tileWidth}px`;
-    el.style.top = `${y * tileHeight}px`;
+    if(el) {
+      el.style.left = `${x * tileWidth}px`;
+      el.style.top = `${y * tileHeight}px`;
+    }
   }
 
   areTilesNeighbors(a, b) {
@@ -178,5 +191,19 @@ uploadInput.addEventListener("change", () => {
       imageInput.value = reader.result;
     };
     reader.readAsDataURL(file);
+  }
+});
+
+resetButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  if(currentPuzzle) {
+    currentPuzzle.reset();
+  }
+});
+
+scrambleButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  if(currentPuzzle) {
+    currentPuzzle.scramble();
   }
 });

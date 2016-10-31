@@ -9,6 +9,10 @@
   margin: 0 auto;
 }
 
+#control-buttons {
+  margin-bottom: 20px;
+}
+
 .puzzle {
   display: inline-block;
 }
@@ -25,7 +29,7 @@
 form {
   max-width: 600px;
   margin: 0 auto;
-  padding-top: 100px;
+  padding-top: 50px;
 }
 
 #submit-button {
