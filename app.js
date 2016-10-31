@@ -33,7 +33,6 @@ class Puzzle {
     });
     this.emptyTile = last(this.tiles);
     this.emptyTile.empty = true;
-    this.scramble();
     this.createElements();
   }
 
