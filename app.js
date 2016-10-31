@@ -1,3 +1,14 @@
+const puzzleContainer = document.querySelector("#puzzle-container");
+const puzzleOptionsForm = document.querySelector("#puzzle-options-form");
+const imageInput = document.querySelector("#puzzle-image-input");
+const uploadInput = document.querySelector("#puzzle-upload-input");
+const columnInput = document.querySelector("#puzzle-column-input");
+const rowInput = document.querySelector("#puzzle-row-input");
+const initialWidth = Math.min(600, window.innerWidth);
+const initialHeight = initialWidth;
+const initialColumns = columnInput.value = 3;
+const initialRows = rowInput.value =  3;
+let currentPuzzle;
 
 class Puzzle {
   constructor({src, rows, columns, width, height}) {
@@ -125,12 +136,47 @@ function last(arr) {
   return arr[arr.length - 1];
 }
 
-const puzzle = new Puzzle({
-  src: "./cat.png",
-  width: 400,
-  height: 400,
-  rows: 3,
-  columns: 3
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image;
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function renderPuzzle(options) {
+  const puzzle = currentPuzzle = new Puzzle(options);
+  puzzleContainer.innerHTML = "";
+  puzzleContainer.appendChild(puzzle.el);
+}
+
+renderPuzzle({src: "./cat.png", width: initialHeight, height: initialWidth, rows: initialRows, columns: initialColumns});
+
+puzzleOptionsForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const src = imageInput.value.trim();
+  const columns = parseInt(columnInput.value);
+  const rows = parseInt(rowInput.value);
+  if(src.length) {
+    loadImage(src)
+      .then(({width, height}) => {
+        const puzzleWidth = 600;
+        const puzzleHeight = (puzzleWidth / width) * height;
+        renderPuzzle({src, width: puzzleWidth, height: puzzleHeight, columns, rows});
+      })
+      .catch((error) => console.log(error));
+  }
 });
 
-document.body.appendChild(puzzle.el);
+uploadInput.addEventListener("change", () => {
+  const file = uploadInput.files[0];
+  console.log(file)
+  if(file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      imageInput.value = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});

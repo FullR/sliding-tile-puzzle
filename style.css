@@ -1,0 +1,27 @@
+#puzzle-container {
+  width: 100%;
+  text-align: center;
+}
+
+#content {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.puzzle {
+  display: inline-block;
+  margin-top: 50px;
+}
+
+form {
+  padding-top: 50px;
+}
+
+#submit-button {
+  margin-top: 20px;
+}
+
+label {
+  display: inline-block;
+  min-width: 200px;
+}
